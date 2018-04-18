@@ -18,6 +18,7 @@ type ProxyConfig struct {
 	Backend      []string  `yaml:"backend"`
 	Log          LogConfig `yaml:"log"`
 	Stats        string    `yaml:"stats"`
+	AllowedIPs   []string  `yaml:"allow_ips"`
 }
 
 // LogConfig Type

@@ -52,6 +52,7 @@ func checkBackendSvrs() {
 
 	for _ = range t {
 		for _, v := range pBackendSvrs {
+			//没10秒检测下统计状态，然后是否自动下线不好用的 backend
 			if v.failTimes >= pConfig.FailOver && v.isUp == true {
 				v.isUp = false
 				pConsisthash.Remove(v.svrStr)

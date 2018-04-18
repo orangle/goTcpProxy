@@ -7,6 +7,21 @@ import (
 	"time"
 )
 
+var ips = make(map[string]bool)
+
+func initAllowedIPs(allowIPs []string){
+	for _, ip := range(allowIPs){
+		// add to allow ip
+		ips[ip] = true
+	}
+	pLog.Infof("allow ips %s", ips)
+}
+
+func isAllowedIP(ip string) bool {
+	_, ok := ips[ip]
+	return ok
+}
+
 func initProxy() {
 
 	pLog.Infof("Proxying %s -> %s\n", pConfig.Bind, pConfig.Backend)
@@ -29,6 +44,12 @@ func initProxy() {
 		if err != nil {
 			pLog.Error(err)
 		} else {
+			ip := connection.RemoteAddr().(*net.TCPAddr).IP.String()
+			if !isAllowedIP(ip){
+				connection.Close()
+				pLog.Infof("deny ip %s", ip)
+				continue
+			}
 			pLog.Infof("Received connection from %s.\n", connection.RemoteAddr())
 			waitQueue <- connection
 		}

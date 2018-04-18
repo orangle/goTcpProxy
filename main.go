@@ -36,7 +36,6 @@ L:
 func main() {
 
 	flag.Parse()
-	fmt.Println("Start Proxy...")
 
 	if parseConfigFile(*configFile) != nil {
 		return
@@ -47,13 +46,14 @@ func main() {
 
 	// init Backend server
 	initBackendSvrs(pConfig.Backend)
+	initAllowedIPs(pConfig.AllowedIPs)
 
 	go onExitSignal()
+	fmt.Println("Start Proxy bind ", pConfig.Bind)
 
 	// init status service
 	initStats()
 
 	// init proxy service
 	initProxy()
-
 }
