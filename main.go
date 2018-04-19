@@ -20,19 +20,22 @@ var (
 
 func onExitSignal() {
 	sigChan := make(chan os.Signal)
-	signal.Notify(sigChan, syscall.SIGUSR1, syscall.SIGTERM, syscall.SIGINT)
+	signal.Notify(sigChan, syscall.SIGUSR1, syscall.SIGTERM, syscall.SIGINT, syscall.SIGHUP)
 L:
 	for {
 		sig := <-sigChan
 		switch sig {
 		case syscall.SIGUSR1:
 			log.Fatal("Reopen log file")
+		case syscall.SIGHUP:
+			log.Fatal("Reload config file")
 		case syscall.SIGTERM, syscall.SIGINT:
 			log.Fatal("Catch SIGTERM singal, exit.")
 			break L
 		}
 	}
 }
+
 func main() {
 
 	flag.Parse()
@@ -41,10 +44,8 @@ func main() {
 		return
 	}
 
-	// init logger server
+	// need to reload some config
 	initLogger()
-
-	// init Backend server
 	initBackendSvrs(pConfig.Backend)
 	initAllowedIPs(pConfig.AllowedIPs)
 
