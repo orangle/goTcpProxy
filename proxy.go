@@ -57,7 +57,10 @@ func initProxy() {
 }
 
 func loop(waitQueue chan net.Conn, availPools chan bool) {
+	// range 是阻塞的吗 ?
+	// chan 关闭，range自动关闭
 	for connection := range waitQueue {
+		// 保持固定个数的conn，退出一个才能增加一个
 		<-availPools
 		go func(connection net.Conn) {
 			handleConnection(connection)
@@ -67,6 +70,8 @@ func loop(waitQueue chan net.Conn, availPools chan bool) {
 	}
 }
 
+
+// 一个 goroution 来处理
 func handleConnection(connection net.Conn) {
 	defer connection.Close()
 
@@ -93,7 +98,7 @@ func handleConnection(connection net.Conn) {
 	remote.Close()
 }
 
-// copy Content two-way
+// copy Content two-way, 从一边读取写到另一边
 func pass(from net.Conn, to net.Conn, complete chan bool, oneSide chan bool, otherSide chan bool) {
 	var err error
 	var read int
@@ -107,7 +112,7 @@ func pass(from net.Conn, to net.Conn, complete chan bool, oneSide chan bool, oth
 			return
 
 		default:
-
+			
 			from.SetReadDeadline(time.Now().Add(time.Duration(pConfig.Timeout) * time.Second))
 			read, err = from.Read(bytes)
 			if err != nil {
