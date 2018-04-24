@@ -7,18 +7,19 @@ import (
 	"time"
 )
 
-var ips = make(map[string]bool)
+// Ips : ip white list
+var Ips = make(map[string]bool)
 
 func initAllowedIPs(allowIPs []string){
 	for _, ip := range(allowIPs){
 		// add to allow ip
-		ips[ip] = true
+		Ips[ip] = true
 	}
-	pLog.Infof("allow ips %s", ips)
+	pLog.Infof("allow ips %s", Ips)
 }
 
 func isAllowedIP(ip string) bool {
-	_, ok := ips[ip]
+	_, ok := Ips[ip]
 	return ok
 }
 
@@ -112,7 +113,7 @@ func pass(from net.Conn, to net.Conn, complete chan bool, oneSide chan bool, oth
 			return
 
 		default:
-			
+
 			from.SetReadDeadline(time.Now().Add(time.Duration(pConfig.Timeout) * time.Second))
 			read, err = from.Read(bytes)
 			if err != nil {
