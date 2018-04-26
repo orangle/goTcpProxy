@@ -5,8 +5,8 @@ timeout: 5
 failover: 1 
 stats: 0.0.0.0:19999
 backend:
-    - 127.0.0.1:8000
-    - 127.0.0.1:84
+    - 127.0.0.1:5000
+    - 127.0.0.1:8008
 log:
     level: "info"
     path: "proxy.log"
